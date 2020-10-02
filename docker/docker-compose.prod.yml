@@ -1,0 +1,70 @@
+version: '3.7'
+
+services:
+  web:
+    build: ..
+    container_name: onedjango-production-web
+    hostname: onedjango-production-web
+    restart: always
+    command: >
+      bash -c "urlwait mysql+pymysql://root:root@onedjango-production-db:3306/onedjangodb 10 &&
+      python /code/manage.py collectstatic --noinput &&
+      python /code/manage.py migrate --noinput &&
+      gunicorn onedjangosrc.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile /code/logs/requests.log --capture-output"
+    volumes:
+      - onedjango_static:/code/static
+      - onedjango_media:/code/media
+    environment:
+      - DATABASE_ENGINE=django.db.backends.mysql
+      - DATABASE_NAME=onedjangodb
+      - DATABASE_USER=${DATABASE_USER:-admin}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-admin123}
+      - DATABASE_HOST=onedjango-production-db
+      - DATABASE_PORT=3306
+      - DEBUG=${DEBUG:-False}
+    expose:
+      - 8000
+    depends_on:
+      - db
+    networks:
+      - onedjango-network
+
+  db:
+    image: mysql:5.7
+    container_name: onedjango-production-db
+    hostname: onedjango-production-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: onedjangodb
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+    volumes:
+      - onedjango_db:/var/lib/mysql
+    networks:
+      - onedjango-network
+
+  nginx:
+    build: ../nginx
+    container_name: onedjango-production-nginx
+    hostname: onedjango-production-nginx
+    restart: always
+    volumes:
+      - onedjango_static:/data_to_serve/static
+      - onedjango_media:/data_to_serve/media
+    ports:
+      - 8000:8000
+    depends_on:
+      - web
+    networks:
+      - onedjango-network
+
+volumes:
+  onedjango_static:
+  onedjango_media:
+  onedjango_db:
+
+networks:
+  onedjango-network:
+    external:
+      name: onedjango-network
