@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('onedjangosrc.users.urls')),
+    path('', include('onedjangosrc.uploader.urls')),
 ]
 
 if settings.DEBUG:

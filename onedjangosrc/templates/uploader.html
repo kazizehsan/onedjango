@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-parent">
+
+    <form class="form-upload" action="{% url 'uploader:upload' %}" method="post" enctype="multipart/form-data">
+        <h1 class="h3 mb-4 font-weight-normal">Upload File</h1>
+        <hr>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+
+        <div class="form-group row">
+            <div class="col-sm-2 col-form-label" >Type:</div>
+            <div class="col-sm-10">
+                {{ form.file_type }}
+            </div>
+            {{ form.file_type.errors }}
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-2 col-form-label" >File:</div>
+            <div class="col-sm-10">
+                <div class="custom-file text-left">
+                    <input class="custom-file-input" type="file" name="{{ form.file.html_name }}" required id="{{ form.file.id_for_label }}">
+                    <label class="custom-file-label" for="{{ form.file.id_for_label }}">{{ form.file.label }}</label>
+                </div>
+            </div>
+            {{ form.file.errors }}
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <button type="submit" class="mb-5 mt-2 btn btn-primary btn-block">Submit</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

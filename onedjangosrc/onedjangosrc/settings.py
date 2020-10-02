@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'onedjangosrc.users'
+    'onedjangosrc.users',
+    'onedjangosrc.uploader',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="container height-full">
+        <div class="pt-4 mb-4 mt-4">
+            <h1 class="h3 mb-3 font-weight-normal">Uploaded Files</h1>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">File name</th>
+              <th scope="col">Type</th>
+              <th scope="col">Uploaded on</th>
+              <th scope="col">Uploaded by</th>
+              <th scope="col">Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for uploadedFile in file_list %}
+            <tr>
+              <th scope="row">{{ uploadedFile.id }}</th>
+              <td>{{ uploadedFile.file.name }}</td>
+              <td>{{ uploadedFile.file_type }}</td>
+              <td>{{ uploadedFile.created_at }}</td>
+              <td>{{ uploadedFile.user }}</td>
+              <td>
+                  <a href="{% url 'uploader:download' uploadedFile.file.name %}">
+                    <img src="{% static 'icons/download.svg' %}" alt="" width="32" height="32" title="Download">
+                  </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <nav aria-label="...">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+            {% endif %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" aria-disabled="true">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+
+    </div>
+
+{% endblock %}
