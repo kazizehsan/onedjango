@@ -7,7 +7,7 @@ services:
     hostname: onedjango-production-web
     restart: always
     command: >
-      bash -c "urlwait mysql+pymysql://root:root@onedjango-production-db:3306/onedjangodb 10 &&
+      bash -c "urlwait mysql://root:root@onedjango-production-db:3306/onedjangodb 10 &&
       python /code/manage.py collectstatic --noinput &&
       python /code/manage.py migrate --noinput &&
       gunicorn onedjangosrc.wsgi:application --bind 0.0.0.0:8000 --access-logfile - --error-logfile /code/logs/requests.log --capture-output"
@@ -53,7 +53,7 @@ services:
       - onedjango_static:/data_to_serve/static
       - onedjango_media:/data_to_serve/media
     ports:
-      - 8000:8000
+      - 80:80
     depends_on:
       - web
     networks:

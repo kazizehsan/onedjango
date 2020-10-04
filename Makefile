@@ -20,7 +20,11 @@ clean: ## Remove development containers and volumes
 	@echo "Removing development containers and volumes"
 	@$(DOCKER_COMMAND_DEV) down -v
 
-prod_up: ## Start production containers
+network: ## Create production docker network
+	@echo "Creating production docker network"
+	./docker/docker-network.sh
+
+prod_up: network ## Start production containers
 	@echo "Starting production containers"
 	@$(DOCKER_COMMAND_PROD) up -d --build
 
